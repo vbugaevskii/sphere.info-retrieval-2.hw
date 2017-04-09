@@ -49,16 +49,20 @@ public class HITSResults extends Configured implements Tool {
         @Override
         protected void reduce(LongWritable key, Iterable<LongWritable> values, Context context)
                 throws IOException, InterruptedException {
+            long rank = 0;
+            for (LongWritable value : values) {
+                rank += value.get();
+            }
+
             if (nodes.size() < TOP_SIZE) {
-                nodes.put(key.get(), values.iterator().next().get());
+                nodes.put(key.get(), rank);
             } else {
                 long candidate = -1;
-                long rank = values.iterator().next().get();
                 long rankMin = rank;
 
                 for (Map.Entry<Long, Long> pair : nodes.entrySet()) {
                     long rankCurr = pair.getValue();
-                    if (rankCurr < rank && rankCurr < rankMin) {
+                    if (rankCurr < rankMin) {
                         candidate = pair.getKey();
                         rankMin = rankCurr;
                     }

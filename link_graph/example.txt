@@ -13,4 +13,4 @@ hadoop fs -cat final/part-r-00000_denumerated
 # Same things for HITS. Default 5 iterations
 hadoop jar linkgraph-1.0.jar ru.mail.sphere.ir2.hits.HITSJob parsed/part-r-00000_numerated out_
 hadoop jar linkgraph-1.0.jar ru.mail.sphere.ir2.hits.HITSResults parsed/urls.idx out_/it05/part-r-* final_
-hadoop fs -cat final/part-r-00000_denumerated
+hadoop fs -cat final_/part-r-00000_denumerated

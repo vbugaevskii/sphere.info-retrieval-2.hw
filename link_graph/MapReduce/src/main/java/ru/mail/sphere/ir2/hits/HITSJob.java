@@ -17,7 +17,7 @@ import org.apache.hadoop.util.ToolRunner;
 import java.io.IOException;
 
 public class HITSJob extends Configured implements Tool {
-    private int iterationCount = 5;
+    private int iterationCount = 4;
 
     private Job getJobConf(String input, String output, int currentIteration) throws IOException {
         Job job = Job.getInstance(getConf());
