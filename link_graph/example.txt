@@ -1,0 +1,16 @@
+# Parse documents. Result is in folder "parsed" 
+hadoop jar linkgraph-1.0.jar ru.mail.sphere.ir2.parser.ParserJob /data/sites/lenta.ru/all/docs-* parsed
+# Numerate all urls. Result is in folder "parsed" : "part-r-00000_numerated" and "urls.idx"
+hadoop jar linkgraph-1.0.jar ru.mail.sphere.ir2.numerator.Numerator parsed/part-r-00000
+
+# Run PageRank. Deafult 30 iterations. Result is in folder "out"
+hadoop jar linkgraph-1.0.jar ru.mail.sphere.ir2.pagerank.PageRankJob parsed/part-r-00000_numerated out
+# Find top-30 documents. Result is in folder "final": "part-r-00000_denumerated"
+hadoop jar linkgraph-1.0.jar ru.mail.sphere.ir2.pagerank.PageRankResults parsed/urls.idx out/it29/part-r-* final
+# Show final result
+hadoop fs -cat final/part-r-00000_denumerated
+
+# Same things for HITS. Default 5 iterations
+hadoop jar linkgraph-1.0.jar ru.mail.sphere.ir2.hits.HITSJob parsed/part-r-00000_numerated out_
+hadoop jar linkgraph-1.0.jar ru.mail.sphere.ir2.hits.HITSResults parsed/urls.idx out_/it05/part-r-* final_
+hadoop fs -cat final/part-r-00000_denumerated
