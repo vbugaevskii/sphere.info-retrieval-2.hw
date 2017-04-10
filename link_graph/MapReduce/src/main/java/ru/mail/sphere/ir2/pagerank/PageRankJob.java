@@ -32,10 +32,11 @@ public class PageRankJob extends Configured implements Tool {
 
         if (currentIteration > 0) {
             job.setMapperClass(PageRankMapper.class);
+            job.setReducerClass(PageRankReducer.class);
         } else {
             job.setMapperClass(PageRankMapperInit.class);
+            job.setReducerClass(PageRankReducerInit.class);
         }
-        job.setReducerClass(PageRankReducer.class);
 
         job.setOutputKeyClass(LongWritable.class);
         job.setMapOutputValueClass(NodeWritable.class);

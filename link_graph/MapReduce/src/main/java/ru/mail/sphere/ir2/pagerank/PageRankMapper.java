@@ -34,9 +34,11 @@ public class PageRankMapper extends Mapper<LongWritable, Text, LongWritable, Nod
 
         context.write(new LongWritable(nodeFromIndex), new NodeWritable(probability, adjacencyList));
 
-        probability = probability / adjacencyList.size();
-        for (Integer nodeIndex : adjacencyList) {
-            context.write(new LongWritable(nodeIndex), new NodeWritable(probability, emptyList));
+        if (adjacencyList.size() > 0) {
+            probability = probability / adjacencyList.size();
+            for (Integer nodeIndex : adjacencyList) {
+                context.write(new LongWritable(nodeIndex), new NodeWritable(probability, emptyList));
+            }
         }
     }
 }
