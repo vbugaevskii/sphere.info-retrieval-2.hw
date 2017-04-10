@@ -58,6 +58,7 @@ public class PageRankJob extends Configured implements Tool {
         String outputFormat = "%s/it%02d";
 
         iterationCount = config.getInt("iters", iterationCount);
+        iterationCount += 1;
 
         String inputStep, outputStep;
         ControlledJob[] steps = new ControlledJob[iterationCount];

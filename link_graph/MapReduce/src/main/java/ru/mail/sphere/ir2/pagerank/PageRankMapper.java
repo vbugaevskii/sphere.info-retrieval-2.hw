@@ -1,5 +1,6 @@
 package ru.mail.sphere.ir2.pagerank;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -9,7 +10,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PageRankMapper extends Mapper<LongWritable, Text, LongWritable, NodeWritable> {
+    private int indexTotal = 1147103;
+    private float probabilityOthers = 1.0f;
     private static List<Integer> emptyList = new LinkedList<Integer>();
+
+    @Override
+    protected void setup(Context context) throws IOException, InterruptedException {
+        super.setup(context);
+
+        Configuration config = context.getConfiguration();
+        indexTotal = config.getInt("total", indexTotal);
+        probabilityOthers = 1.0f / indexTotal;
+    }
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
@@ -32,7 +44,7 @@ public class PageRankMapper extends Mapper<LongWritable, Text, LongWritable, Nod
             adjacencyList = emptyList;
         }
 
-        context.write(new LongWritable(nodeFromIndex), new NodeWritable(probability, adjacencyList));
+        context.write(new LongWritable(nodeFromIndex), new NodeWritable(-1.0f, adjacencyList));
 
         if (adjacencyList.size() > 0) {
             probability = probability / adjacencyList.size();

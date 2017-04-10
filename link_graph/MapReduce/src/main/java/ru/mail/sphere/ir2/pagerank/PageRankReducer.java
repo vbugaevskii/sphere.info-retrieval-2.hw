@@ -28,7 +28,7 @@ public class PageRankReducer extends Reducer<LongWritable, NodeWritable, LongWri
         List<Integer> nodesTo = new LinkedList<Integer>();
 
         for (NodeWritable node : values) {
-            if (node.getAdjacencyListSize() > 0) {
+            if (node.getProbability() < 0.0f) {
                 nodesTo.addAll(node.getAdjacencyList());
             } else {
                 probability += node.getProbability();
