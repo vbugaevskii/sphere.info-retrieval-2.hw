@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PageRankMapperInit extends Mapper<LongWritable, Text, LongWritable, NodeWritable> {
-    private int indexTotal = 1147103;
     private float probability = 1.0f;
     private static List<Integer> emptyList = new LinkedList<Integer>();
 
@@ -19,7 +18,7 @@ public class PageRankMapperInit extends Mapper<LongWritable, Text, LongWritable,
         super.setup(context);
 
         Configuration config = context.getConfiguration();
-        indexTotal = config.getInt("total", indexTotal);
+        int indexTotal = config.getInt(PageRankJob.parameterN, PageRankJob.DEFAULT_N);
         probability = 1.0f / indexTotal;
     }
 

@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PageRankMapper extends Mapper<LongWritable, Text, LongWritable, NodeWritable> {
-    private int indexTotal = 1147103;
-    private float probabilityOthers = 1.0f;
+public class PageRankMapperStepSecond extends Mapper<LongWritable, Text, LongWritable, NodeWritable> {
+    private float probabilityLeft;
+    private float alpha;
+    private int indexTotal;
+
     private static List<Integer> emptyList = new LinkedList<Integer>();
 
     @Override
@@ -19,8 +21,9 @@ public class PageRankMapper extends Mapper<LongWritable, Text, LongWritable, Nod
         super.setup(context);
 
         Configuration config = context.getConfiguration();
-        indexTotal = config.getInt("total", indexTotal);
-        probabilityOthers = 1.0f / indexTotal;
+        indexTotal = config.getInt(PageRankJob.parameterN, PageRankJob.DEFAULT_N);
+        alpha = config.getFloat(PageRankJob.parameterAlpha, PageRankJob.DEFAULT_ALPHA);
+        probabilityLeft = config.getFloat(PageRankJob.parameterLeftRank, 0.0f);
     }
 
     @Override
@@ -44,13 +47,7 @@ public class PageRankMapper extends Mapper<LongWritable, Text, LongWritable, Nod
             adjacencyList = emptyList;
         }
 
-        context.write(new LongWritable(nodeFromIndex), new NodeWritable(-1.0f, adjacencyList));
-
-        if (adjacencyList.size() > 0) {
-            probability = probability / adjacencyList.size();
-            for (Integer nodeIndex : adjacencyList) {
-                context.write(new LongWritable(nodeIndex), new NodeWritable(probability, emptyList));
-            }
-        }
+        probability = alpha * (probability + probabilityLeft / indexTotal) + (1.0f - alpha) / indexTotal;
+        context.write(new LongWritable(nodeFromIndex), new NodeWritable(probability, adjacencyList));
     }
 }

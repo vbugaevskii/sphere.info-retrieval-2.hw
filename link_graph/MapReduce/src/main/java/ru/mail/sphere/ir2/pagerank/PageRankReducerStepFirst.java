@@ -8,18 +8,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PageRankReducer extends Reducer<LongWritable, NodeWritable, LongWritable, NodeWritable> {
-    private float alpha = 0.75f;
-    private int indexTotal = 1147103;
-
-    @Override
-    protected void setup(Context context) throws IOException, InterruptedException {
-        super.setup(context);
-
-        Configuration config = context.getConfiguration();
-        indexTotal = config.getInt("total", indexTotal);
-        alpha = config.getFloat("alpha", alpha);
-    }
+public class PageRankReducerStepFirst extends Reducer<LongWritable, NodeWritable, LongWritable, NodeWritable> {
+    private float probabilityLeft = 0.0f;
 
     @Override
     protected void reduce(LongWritable key, Iterable<NodeWritable> values, Context context)
@@ -35,7 +25,17 @@ public class PageRankReducer extends Reducer<LongWritable, NodeWritable, LongWri
             }
         }
 
-        probability = alpha * probability + (1.0f - alpha) / indexTotal;
+        if (nodesTo.isEmpty()) {
+            probabilityLeft += probability;
+        }
+
         context.write(key, new NodeWritable(probability, nodesTo));
+    }
+
+    @Override
+    protected void cleanup(Context context) throws IOException, InterruptedException {
+        context.getConfiguration().setFloat(PageRankJob.parameterLeftRank, probabilityLeft);
+
+        super.cleanup(context);
     }
 }
